@@ -1,6 +1,6 @@
 import pyrebase
 
-my_config = {"apiKey": "AIzaSyATkjWBDNo5RKprJZxjw_BivaBvP17Ff0I",
+my_config = {"apiKey": "api_key",
   "authDomain": "python-b71a9.firebaseapp.com",
   "databaseURL": "https://python-b71a9-default-rtdb.firebaseio.com",
   "projectId": "python-b71a9",
@@ -40,4 +40,5 @@ def getmail(hospital_name):
     if hospital_data.val():
         return hospital_data.val()
     else:
+
         return []
