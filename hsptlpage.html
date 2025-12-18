@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hospital Management Portal</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #74ebd5, #acb6e5);
+  height: 100vh;
+  width: 100%;
+  background-attachment: fixed;
+}
+
+.container {
+  width: 90%;
+  max-width: 500px;
+  background: rgba(13, 255, 255, 0.559);
+  padding: 20px;
+  margin: 40px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056cc;
+}
+
+.msg {
+  text-align: center;
+  color: green;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+.back-btn {
+  background: #777;
+  margin-top: 10px;
+}
+
+.back-btn:hover {
+  background: #555;
+}
+
+.hospital {
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.hospital-name {
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.hospital-emails {
+  color: #555;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.patient {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.menu-grid {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease;
+  width: 150px;
+}
+
+.menu-item:hover {
+  transform: translateY(-5px);
+}
+
+.menu-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.menu-item button {
+  width: 100%;
+  background: #4780bd;
+  color: rgb(255, 255, 255);
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.menu-item button:hover {
+  background: #0056cc;
+}
+
+@media (max-width: 600px) {
+  .menu-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Accident and Admin Styles */
+#hospitalList,
+#registerPage,
+#loginPage,
+#adminLoginPage,
+#hospitalDashboard {
+  display: none;
+}
+
+#accidentHospitals {
+  margin-top: 20px;
+  background: #fff8f8;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.accident-item {
+  border-bottom: 1px solid #ddd;
+  padding: 8px;
+}
+
+.accident-item button {
+  width: auto;
+  padding: 5px 10px;
+  font-size: 14px;
+  margin: 3px;
+  border-radius: 6px;
+}
+
+.accept-btn {
+  background: #28a745;
+}
+
+.accept-btn:hover {
+  background: #218838;
+}
+
+.deny-btn {
+  background: #dc3545;
+}
+
+.deny-btn:hover {
+  background: #c82333;
+}
+
+#acceptedHospitalDiv {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #e6ffe6;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: none;
+}
+
+#allAcceptedCases {
+  margin-top: 20px;
+  background: #f1f9ff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+</style>
+</head>
+<body>
+
+<!-- Home Page -->
+<div class="container" id="hospitalMainPage">
+  <h2>Hospital Management Portal</h2>
+  <div class="menu-grid">
+    <div class="menu-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/2966/2966327.png" alt="Register" class="menu-img">
+      <button id="btnRegister">Register Hospital</button>
+    </div>
+    <div class="menu-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/387/387561.png" alt="Hospital Login" class="menu-img">
+      <button id="btnHospitalLogin">Hospital Login</button>
+    </div>
+    <div class="menu-item">
+      <img src="https://cdn-icons-png.flaticon.com/512/6024/6024190.png" alt="Admin Login" class="menu-img">
+      <button id="btnAdminLogin">Admin Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- Register Hospital -->
+<div class="container" id="registerPage">
+  <h2>Register Hospital</h2>
+  <form id="registerForm">
+    <input id="hospitalName" placeholder="Hospital Name" required />
+    <input id="emailsInput" placeholder="Emails (comma separated)" required />
+    <input id="password" type="password" placeholder="Password" required />
+    <button type="submit">Register</button>
+  </form>
+  <p id="message" class="msg"></p>
+  <button class="back-btn" id="backFromRegister">← Back</button>
+</div>
+
+<!-- Hospital Login -->
+<div class="container" id="loginPage">
+  <h2>Hospital Login</h2>
+  <form id="loginForm">
+    <input id="loginHospitalName" placeholder="Hospital Name" required />
+    <input id="loginPassword" type="password" placeholder="Password" required />
+    <button type="submit">Login</button>
+  </form>
+  <p id="loginMsg" class="msg"></p>
+  <button class="back-btn" id="backFromLogin">← Back</button>
+</div>
+
+<!-- Hospital Dashboard -->
+<div class="container" id="hospitalDashboard">
+  <h2 id="hospitalWelcome">Welcome</h2>
+  <div id="accidentHospitals">
+    <h3>🚨 Accident Alerts</h3>
+    <div id="accidentList">Loading...</div>
+  </div>
+  <div id="acceptedHospitalDiv">
+    <h3>✅ Accident Accepted by:</h3>
+    <div id="acceptedHospitalName" style="font-weight:bold; font-size:16px;"></div>
+  </div>
+
+  <div id="allAcceptedCases">
+    <h3>📍 All Accepted Accident Cases</h3>
+    <div id="acceptedCasesList">Loading...</div>
+  </div>
+
+  <button class="back-btn" id="logoutBtn">← Logout</button>
+</div>
+
+<!-- Admin Login -->
+<div class="container" id="adminLoginPage">
+  <h2>Admin Login</h2>
+  <form id="adminLoginForm">
+    <input id="adminEmail" placeholder="Admin Username" required />
+    <input id="adminPassword" type="password" placeholder="Admin Password" required />
+    <button type="submit">Login</button>
+  </form>
+  <p id="adminLoginMsg" class="msg"></p>
+  <button class="back-btn" id="backFromAdminLogin">← Back</button>
+</div>
+
+<!-- Admin Hospital List -->
+<div class="container" id="hospitalList">
+  <h2>Registered Hospitals</h2>
+  <div id="hospitalData"></div>
+  <button class="back-btn" id="backFromHospitalList">← Back</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, set, get, onValue, update } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+
+// --- IMPORTANT ---
+// This is a public demo config. Do not use in production.
+const firebaseConfig = {
+  apiKey: "AIzaSyATkjWBDNo5RKprJZxjw_BivaBvP17Ff0I",
+  authDomain: "python-b71a9.firebaseapp.com",
+  databaseURL: "https://python-b71a9-default-rtdb.firebaseio.com",
+  projectId: "python-b71a9",
+  storageBucket: "python-b71a9.appspot.com",
+  messagingSenderId: "810660670598",
+  appId: "1:810660670598:web:5d0f0e2dd72b62a77507"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const ADMIN_EMAIL = "admin";
+const ADMIN_PASSWORD = "admin123";
+
+const hospitalMainPage = document.getElementById("hospitalMainPage");
+const registerPage = document.getElementById("registerPage");
+const loginPage = document.getElementById("loginPage");
+const hospitalDashboard = document.getElementById("hospitalDashboard");
+const adminLoginPage = document.getElementById("adminLoginPage");
+const hospitalList = document.getElementById("hospitalList");
+
+const registerForm = document.getElementById("registerForm");
+const loginForm = document.getElementById("loginForm");
+const adminLoginForm = document.getElementById("adminLoginForm");
+const message = document.getElementById("message");
+const loginMsg = document.getElementById("loginMsg");
+const adminLoginMsg = document.getElementById("adminLoginMsg");
+
+const accidentListDiv = document.getElementById("accidentList");
+const acceptedDiv = document.getElementById("acceptedHospitalDiv");
+const acceptedNameDiv = document.getElementById("acceptedHospitalName");
+const hospitalWelcome = document.getElementById("hospitalWelcome");
+const acceptedCasesList = document.getElementById("acceptedCasesList");
+
+let currentHospitalKey = null;
+
+function showPage(page) {
+  [hospitalMainPage, registerPage, loginPage, adminLoginPage, hospitalList, hospitalDashboard].forEach(p => p.style.display = "none");
+  page.style.display = "block";
+}
+
+function sanitizeKey(name) {
+  return name.trim().replace(/[.#$[\]]/g, "_");
+}
+
+// --- Register ---
+registerForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = hospitalName.value.trim();
+  const emails = emailsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+  const pwd = password.value;
+  const key = sanitizeKey(name);
+  if (!name || !emails.length || !pwd) { message.textContent = "Fill all fields"; message.style.color = "red"; return; }
+  const snap = await get(ref(db, 'hospitals/' + key));
+  if (snap.exists()) { message.textContent = "Hospital already registered"; message.style.color = "red"; return; }
+  await set(ref(db, 'hospitals/' + key), { displayName: name, mail_ids: emails, password: pwd, isAccident: false });
+  message.textContent = "Hospital registered successfully"; message.style.color = "green";
+  registerForm.reset();
+});
+
+// --- Login ---
+loginForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const hospitalName = loginHospitalName.value.trim();
+  const typedPass = loginPassword.value;
+  const key = sanitizeKey(hospitalName);
+  const snap = await get(ref(db, `hospitals/${key}`));
+  if (!snap.exists()) { loginMsg.textContent = "Hospital not found"; loginMsg.style.color = "red"; return; }
+  const data = snap.val();
+  if (data.password !== typedPass) { loginMsg.textContent = "Incorrect password"; loginMsg.style.color = "red"; return; }
+
+  currentHospitalKey = key;
+  showPage(hospitalDashboard);
+  hospitalWelcome.textContent = "Welcome, " + data.displayName;
+  listenAccidentForThisHospital(key);
+  showAcceptedCasesForHospital(key);
+});
+
+// --- Accident Alert ---
+function listenAccidentForThisHospital(loggedInKey) {
+  const hospitalRef = ref(db, `hospitals/${loggedInKey}`);
+  onValue(hospitalRef, snap => {
+    const data = snap.val();
+    accidentListDiv.innerHTML = "";
+    if (!data) return;
+    if (data.isAccident) {
+      const div = document.createElement("div");
+      div.className = "accident-item";
+      div.innerHTML = `<div><b>🚨 Accident Alert!</b></div><div>This hospital (${data.displayName}) has reported an accident.</div>`;
+      const acceptBtn = document.createElement("button");
+      acceptBtn.textContent = "Accept";
+      acceptBtn.className = "accept-btn";
+      const denyBtn = document.createElement("button");
+      denyBtn.textContent = "Deny";
+      denyBtn.className = "deny-btn";
+
+      acceptBtn.onclick = async () => {
+        const tsKey = Date.now().toString();
+        await update(ref(db, `hospitals/${loggedInKey}/location/${tsKey}`), {
+          accepted: true, timestamp: Date.now(), acceptedBy: data.displayName
+        });
+
+        // Reset accident flags
+        const hospitalsRef = ref(db, 'hospitals');
+        const allSnap = await get(hospitalsRef);
+        if (allSnap.exists()) {
+          const updates = {};
+          Object.keys(allSnap.val()).forEach(key => {
+            updates[`hospitals/${key}/isAccident`] = false;
+          });
+          await update(ref(db), updates);
+        }
+
+        acceptedDiv.style.display = "block";
+        acceptedNameDiv.textContent = data.displayName;
+      };
+
+      denyBtn.onclick = async () => {
+        await update(ref(db, `hospitals/${loggedInKey}`), { isAccident: false });
+      };
+
+      div.appendChild(acceptBtn);
+      div.appendChild(denyBtn);
+      accidentListDiv.appendChild(div);
+    } else {
+      accidentListDiv.innerHTML = "<p>No accident alerts</p>";
+      acceptedDiv.style.display = "none";
+    }
+  });
+}
+
+// --- Accepted Cases ---
+function showAcceptedCasesForHospital(hospitalKey) {
+  const hospitalLocRef = ref(db, `hospitals/${hospitalKey}/location`);
+  onValue(hospitalLocRef, snap => {
+    const data = snap.val();
+    acceptedCasesList.innerHTML = "";
+    if (!data) {
+      acceptedCasesList.innerHTML = "<p>No accepted cases found.</p>";
+      return;
+    }
+    Object.entries(data).forEach(([ts, info]) => {
+      if (info.accepted) {
+        const div = document.createElement("div");
+        const date = new Date(parseInt(ts)).toLocaleString();
+        div.className = "patient";
+        div.innerHTML = `<b>Accepted By:</b> ${info.acceptedBy}<br/><b>Time:</b> ${date}<br/><b>Status:</b> ✅ Accepted`;
+        acceptedCasesList.appendChild(div);
+      }
+    });
+  });
+}
+
+// --- Admin ---
+adminLoginForm.addEventListener("submit", e => {
+  e.preventDefault();
+  const email = adminEmail.value.trim();
+  const pass = adminPassword.value.trim();
+  if (email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
+    adminLoginMsg.textContent = "✅ Admin logged in successfully!";
+    adminLoginMsg.style.color = "green";
+    loadHospitalList();
+    showPage(hospitalList);
+  } else {
+    adminLoginMsg.textContent = "❌ Invalid admin credentials";
+    adminLoginMsg.style.color = "red";
+  }
+});
+
+function loadHospitalList() {
+  const hospitalsRef = ref(db, "hospitals");
+  const hospitalDataDiv = document.getElementById("hospitalData");
+  hospitalDataDiv.innerHTML = "<p>Loading hospitals...</p>";
+  onValue(hospitalsRef, snap => {
+    const data = snap.val() || {};
+    hospitalDataDiv.innerHTML = "";
+    Object.entries(data).forEach(([key, details]) => {
+      const div = document.createElement("div");
+      div.className = "hospital";
+      div.innerHTML = `<div class="hospital-name">${details.displayName}</div>
+        <div class="hospital-emails">Emails: ${(details.mail_ids || []).join(", ")}</div>
+        <small>Status: ${details.isAccident ? "🚨 Accident Active" : "✅ Normal"}</small>`;
+      div.onclick = () => showHospitalLocation(key, details.displayName);
+      hospitalDataDiv.appendChild(div);
+    });
+  });
+}
+
+let viewingSingleHospital = false;
+function showHospitalLocation(hospitalKey, displayName) {
+  viewingSingleHospital = true;
+  const locationRef = ref(db, `hospitals/${hospitalKey}/location`);
+  const hospitalDataDiv = document.getElementById("hospitalData");
+  hospitalDataDiv.innerHTML = `<h3>${displayName} - Location Logs</h3>`;
+  onValue(locationRef, snap => {
+    const data = snap.val();
+    if (!data) { hospitalDataDiv.innerHTML += "<p>No location details found.</p>"; return; }
+    Object.entries(data).forEach(([ts, info]) => {
+      const div = document.createElement("div");
+      const date = new Date(parseInt(ts)).toLocaleString();
+      div.className = "patient";
+      div.innerHTML = `<b>Time:</b> ${date}<br/>
+        <b>Status:</b> ${info.accepted ? "✅ Accepted" : "❌ Denied"}<br/>
+        <b>Accepted By:</b> ${info.acceptedBy || "N/A"}`;
+      hospitalDataDiv.appendChild(div);
+    });
+  });
+}
+
+// Navigation Buttons
+btnRegister.onclick = () => showPage(registerPage);
+btnHospitalLogin.onclick = () => showPage(loginPage);
+btnAdminLogin.onclick = () => showPage(adminLoginPage);
+backFromRegister.onclick = () => showPage(hospitalMainPage);
+backFromLogin.onclick = () => showPage(hospitalMainPage);
+backFromAdminLogin.onclick = () => showPage(hospitalMainPage);
+backFromHospitalList.onclick = () => {
+  if (viewingSingleHospital) { loadHospitalList(); viewingSingleHospital = false; }
+  else showPage(hospitalMainPage);
+};
+logoutBtn.onclick = () => showPage(hospitalMainPage);
+
+</script>
+</body>
+</html>
